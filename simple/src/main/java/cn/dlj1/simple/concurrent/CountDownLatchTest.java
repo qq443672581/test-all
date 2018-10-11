@@ -14,31 +14,25 @@ public class CountDownLatchTest {
     public static void main(String[] args) {
         java.util.concurrent.CountDownLatch count = new java.util.concurrent.CountDownLatch(2);
 
-        new Thread() {
-            @Override
-            public void run() {
-                System.out.println("线程1开始了");
-                try {
-                    Thread.sleep(2000);
-                    count.countDown();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            System.out.println("线程1开始了");
+            try {
+                Thread.sleep(2000);
+                count.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+        }).start();
 
-        new Thread() {
-            @Override
-            public void run() {
-                System.out.println("线程2开始了");
-                try {
-                    Thread.sleep(2000);
-                    count.countDown();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            System.out.println("线程2开始了");
+            try {
+                Thread.sleep(2000);
+                count.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+        }).start();
 
         System.out.println("任务都在开始了");
         try {
