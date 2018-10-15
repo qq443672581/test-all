@@ -36,9 +36,10 @@ public class SocketServer {
                             socket.getOutputStream(), true);
 
                     printWriter.println("HTTP/1.1 200 OK");
-                    printWriter.println("Content-Type:text/html;charset=utf-8");
+                    printWriter.println("Content-Type:application/json;charset=utf-8");
+                    printWriter.println("a:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ");
                     printWriter.println();
-                    printWriter.println("<h5>你好世界<br>");
+                    printWriter.println("{}");
 
                 } catch (IOException e) {
                     e.printStackTrace();
