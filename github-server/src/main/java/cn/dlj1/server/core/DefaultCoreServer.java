@@ -10,21 +10,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class DefaultCoreServer implements CoreServer{
 
+    private static Logger logger = Logger.getLogger(DefaultCoreServer.class.getName());
+
     long time = 0;
     HttpServer server = null;
-    Executor executor = Executors.newFixedThreadPool(10);
+    Executor executor = null;
     Map<String, BaseHandler> instances = new HashMap<>();
 
-    public DefaultCoreServer(int port, Class<? extends BaseHandler>... classes) {
+    private void init(int port, int poolSize, Class<? extends BaseHandler>... classes){
         time = System.currentTimeMillis();
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        executor = Executors.newFixedThreadPool(poolSize);
 
         for (int i = 0; i < classes.length; i++) {
             Class<? extends BaseHandler> clazz = classes[i];
@@ -53,13 +57,16 @@ public class DefaultCoreServer implements CoreServer{
                 });
             });
         }
+    }
 
+    public DefaultCoreServer(int port, Class<? extends BaseHandler>... classes) {
+        init(port, 5, classes);
     }
 
     @Override
     public void start() {
         server.start();
-        System.out.println(String.format("启动用时:%dms",(System.currentTimeMillis() - time)));
+        logger.info(String.format("启动用时:%dms",(System.currentTimeMillis() - time)));
 
     }
 

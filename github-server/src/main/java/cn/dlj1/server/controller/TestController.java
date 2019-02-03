@@ -2,21 +2,17 @@ package cn.dlj1.server.controller;
 
 import cn.dlj1.server.suport.BaseHandler;
 import cn.dlj1.server.suport.Controller;
-import com.sun.net.httpserver.HttpExchange;
-
-import java.io.IOException;
 
 @Controller("/test")
 public class TestController extends BaseHandler{
 
     @Override
-    public String handler(HttpExchange exchange) {
-        try {
-            exchange.sendResponseHeaders(200, 0);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Object handler() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 1; i++) {
+            builder.append("你好,世界");
         }
-        return "你好，世界!";
+        return builder.toString();
     }
 
 }
