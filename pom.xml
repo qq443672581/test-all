@@ -11,6 +11,7 @@
     <modules>
         <module>simple</module>
         <module>jf</module>
+        <module>github-server</module>
     </modules>
 
     <dependencies>
