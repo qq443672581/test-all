@@ -12,7 +12,10 @@ public class TestController extends BaseHandler{
         for (int i = 0; i < 1; i++) {
             builder.append("你好,世界");
         }
-        return builder.toString();
+
+        addResponseHeader("Content-Type","application/json;charset=utf-8");
+
+        return new String[]{"你好","世界"};
     }
 
 }

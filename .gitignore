@@ -2,3 +2,7 @@
 .gitignore
 .idea/*
 *.iml
+/github-server/META-INF/
+classes/artifacts/github_server_jar/
+github-server/target/
+simple/target/
