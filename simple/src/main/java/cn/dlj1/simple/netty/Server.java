@@ -10,10 +10,10 @@ import io.netty.util.AsciiString;
 
 public class Server {
 
-    private int port = 8888;
+    private int port;
 
     public Server(int port){
-        this.port =port;
+        this.port = port;
     }
 
     public static void main(String[] args) {

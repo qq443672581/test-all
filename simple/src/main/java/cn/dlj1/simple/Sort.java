@@ -14,7 +14,7 @@ public class Sort {
         names.add("Sina ");
 
         System.out.println(names);
-        Collections.sort(names, (o1, o2) -> o1.compareTo(o2));
+        Collections.sort(names, String::compareTo);
         System.out.println(names);
 
     }
