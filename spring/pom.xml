@@ -12,5 +12,12 @@
 
     <artifactId>spring</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.0.1.RELEASE</version>
+        </dependency>
+    </dependencies>
 
 </project>
