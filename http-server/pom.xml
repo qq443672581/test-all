@@ -11,9 +11,6 @@
 
     <artifactId>github-server</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>../githu-bblog-suport</module>
-    </modules>
 
     <dependencies>
 

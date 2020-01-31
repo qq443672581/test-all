@@ -1,12 +1,12 @@
 package cn.dlj1.simple.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.*;
-import io.netty.util.AsciiString;
 
 public class Server {
 
@@ -29,42 +29,52 @@ public class Server {
     }
 
     public void start() throws Exception {
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
-        bootstrap.group(group)
+        new ServerBootstrap()
+                .group(new NioEventLoopGroup())
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer() {
-                    protected void initChannel(Channel channel) throws Exception {
-
-
-                        System.out.println("initChannel ch:" + channel);
-                        channel.pipeline()
-                                .addLast("decoder", new HttpRequestDecoder())   // 1
-                                .addLast("encoder", new HttpResponseEncoder())  // 2
-                                .addLast("aggregator", new HttpObjectAggregator(512 * 1024))    // 3
-                                .addLast("handler", new HttpHandler());        // 4
+                    protected void initChannel(Channel channel) {
+                        channel
+                                .pipeline()
+                                .addLast(new HttpRequestDecoder())
+                                .addLast(new HttpResponseEncoder())
+                                .addLast(new HttpObjectAggregator(512 * 1024))    // 3
+                                .addLast(new HttpHandler());        // 4
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128) // determining the number of connections queued
-                .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
+                .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE)
 
-        bootstrap.bind(port).sync();
+                .bind(port)
+                .sync();
 
     }
 
-    public static class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { // 1
-
-        private AsciiString contentType = HttpHeaderValues.TEXT_PLAIN;
+    public static class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-            System.out.println("class:" + msg.getClass().getName());
-            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
+        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
+            System.out.println(request.uri());
+
+            ByteBuf content = request.content();
+
+            byte[] bytes = new byte[content.readableBytes()];
+
+            content.readBytes(bytes);
+
+            System.out.println(new String(bytes));
+
+
+            ByteBuf re = Unpooled.wrappedBuffer(bytes);
+
+            DefaultFullHttpResponse response = new DefaultFullHttpResponse(
+                    HttpVersion.HTTP_1_1,
                     HttpResponseStatus.OK,
-                    Unpooled.wrappedBuffer("test".getBytes())); // 2
+                    re
+            );
 
             HttpHeaders heads = response.headers();
-            heads.add(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=UTF-8");
+            heads.add(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN + "; charset=UTF-8");
             heads.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes()); // 3
             heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 
@@ -73,7 +83,6 @@ public class Server {
 
         @Override
         public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-            System.out.println("channelReadComplete");
             super.channelReadComplete(ctx);
             ctx.flush(); // 4
         }
@@ -84,6 +93,7 @@ public class Server {
             if(null != cause) cause.printStackTrace();
             if(null != ctx) ctx.close();
         }
+
     }
 
 
